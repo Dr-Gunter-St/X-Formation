@@ -1,1 +1,18 @@
 
+First query:
+
+SELECT XF.Country.Name FROM XF.Country AS country JOIN (
+    SELECT XF.City.CountryID, SUM(XF.City.Population) as totalPopulation FROM XF.City GROUP BY XF.City.CountryID) AS citiesPopulation
+ON country.CountryID = citiesPopulation.CountryID
+WHERE totalPopupation > 400;
+
+Second query:
+
+SELECT CountryName FROM (
+  SELECT XF.Country.Name as CountryName, SUM(buildingCount.cb) as buildings FROM XF.Country LEFT JOIN (
+    SELECT XF.City.CityID AS CityID, XF.City.CountryID AS CountryID, COUNT(XF.Building.BuildingID) AS cb
+    FROM XF.City LEFT JOIN XF.Building
+    ON city.CityID = building.CityID GROUP BY CityID) AS buildingCount
+  ON XF.Country.CountryID = buildingCount.CountryID
+  GROUP BY XF.Country.CountryID)
+WHERE buildings = 0 OR buildings IS NULL;
